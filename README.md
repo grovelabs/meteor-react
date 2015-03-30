@@ -19,6 +19,8 @@ named `getReactiveState` and return an object from that method, much
 like the standard `getInitialState`. Within the `getReactiveState`
 function you must make sure to call on [reactive data sources](http://docs.meteor.com/#/full/reactivity) or else the method won't rerun.
 
+
+
 #### Example
 ```js
 Bookface = React.createClass({
@@ -26,13 +28,20 @@ Bookface = React.createClass({
   
   getReactiveState: function() {
     return {
-      title: Session.get("pageTitle"),
       friends: Friends.find().fetch(),
       loggedIn: !!Meteor.user()
     }
   },
   
-  render: function() {/**/}  
+  render: function() {
+    if (this.state.loggedIn) {
+	    if (this.state.friends.length > 0) {
+	      return <h1>You've got friends!</h1>
+	    }
+	    return <h1>Forever alone...</h1>;
+	 }
+	 return <h1>Please log in</h1>
+  }  
 });
 ```
 
