@@ -9,6 +9,7 @@ var reactPath = 'vendor/react-with-addons-';
 var reactVersion = "0.13.1";
 
 Package.onUse( function(api) {
+  api.versionsFrom('METEOR@1.0.5');
   api.use([
     'tracker',
     'reactive-var',
