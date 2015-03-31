@@ -1,3 +1,4 @@
+var log = console.log.bind(console, "ReactiveMixin =>");
 /**
  * This mixin provides a way of binding reactive data sources to React
  * components. Components that use this mixin should implement a method
@@ -13,10 +14,16 @@
 ReactiveMixin = {
 
   getInitialState: function() {
+    log("getInitialState");
     var self = this;
     if ( self.getReactiveState ) {
       var initState = {};
-      self._reactiveStateComputation = Tracker.autorun( function(computation) {
+      Tracker.autorun( function(computation) {
+        log("autorun");
+        computation.onInvalidate( function() {
+          log("autorun invalidated");
+          log("computation is", computation.stopped ? 'stopped' : 'not stopped');
+        });
         // Something in getReactiveState MUST be a reactive data source
         // in order for rerun
         var reactiveState = self.getReactiveState();
@@ -24,10 +31,12 @@ ReactiveMixin = {
           if (computation.firstRun) {
               initState = reactiveState;
           } else if ( self.isMounted() ) {
+            log("mounted, changing state");
             // can't call setState until component is mounted
             self.setState(reactiveState);
           } else { // it's not mounted and we need to wait to `setState`
             Tracker.afterFlush(function () {
+              log("afterFlush");
               self.setState(reactiveState); // set async
             });
           }
@@ -37,7 +46,30 @@ ReactiveMixin = {
     }
   },
 
+  // componentWillMount: function() {
+  //   log("componentWillMount");
+  //   var self = this;
+  //   if ( self.getReactiveState ) {
+  //     var initState = {};
+  //     Tracker.autorun( function(computation) {
+  //       log("autorun");
+  //       computation.onInvalidate( function() {
+  //         log("autorun invalidated", self._reactInternalInstance.getName());
+  //         log("computation is", computation.stopped ? 'stopped' : 'not stopped');
+  //       });
+  //       // Something in getReactiveState MUST be a reactive data source
+  //       // in order for rerun
+  //       var reactiveState = self.getReactiveState();
+  //       if ( typeof reactiveState !== 'undefined' ) {
+  //         log("setting state", reactiveState);
+  //         self.setState(reactiveState); // set async
+  //       }
+  //     });
+  //   }
+  // },
+
   componentWillUnmount: function() {
+    log("UNMOUNTING");
     if (this._reactiveStateComputation) {
       this._reactiveStateComputation.stop();
       this._reactiveStateComputation = null;
