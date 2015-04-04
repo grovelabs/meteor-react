@@ -8,3 +8,5 @@ meteor-platform
 insecure
 grigio:babel
 grove:react
+accounts-ui
+accounts-password

@@ -21,6 +21,7 @@ if (Meteor.isClient) {
       if ( this.subsReady() ) {
         var selectedPlayer = Players.findOne(Session.get("selected_player"));
         return {
+          user: Meteor.user() && Meteor.user().emails[0].address,
           players: Players.find({}, {sort: {score: -1, name: 1}}).fetch(),
           selectedPlayer: selectedPlayer,
           selectedName: selectedPlayer && selectedPlayer.name
@@ -75,6 +76,10 @@ if (Meteor.isClient) {
         );
       }
 
+      children.push(
+        <span>You are {this.state.user || 'not logged in :('}</span>
+      )
+
       return <div className="inner">{ children }</div>;
     }
   });
@@ -98,7 +103,7 @@ if (Meteor.isClient) {
 
   // Attach to a document id.
   Meteor.startup(function (argument) {
-    React.render(<Leaderboard />, document.body);
+    React.render(<Leaderboard />, document.getElementById('leaderboard_placeholder'));
   });
 
 } // client
