@@ -51,36 +51,33 @@ if (Meteor.isClient) {
 
     render: function() {
       if (! this.state.players) return <p>loading..</p>
-      var children = [
-        <div className="leaderboard">
-          { this.state.players.map(this.renderPlayer) }
-        </div>
-      ];
+
+      var inputOrMessage;
 
       if (this.state.selectedName) {
-        children.push(
-          <div className="details">
-            <div className="name">{this.state.selectedName}</div>
-            <input
-              type="button"
-              className="inc"
-              value="Give 5 points"
-              onClick={this.addFivePoints}
-            />
-          </div>
-        );
-
+        inputOrMessage = <div className="details">
+                          <div className="name">{this.state.selectedName}</div>
+                          <input
+                            type="button"
+                            className="inc"
+                            value="Give 5 points"
+                            onClick={this.addFivePoints}
+                          />
+                        </div>
       } else {
-        children.push(
-          <div className="none">Click a player to select</div>
-        );
+        inputOrMessage = <div className="none">
+                           Click a player to select
+                         </div>
       }
 
-      children.push(
-        <span>You are {this.state.user || 'not logged in :('}</span>
+      return (
+        <div className="leaderboard">
+          { this.state.players.map(this.renderPlayer) }
+          { inputOrMessage }
+          <span>You are {this.state.user || 'not logged in :('}</span>
+        </div>
       )
 
-      return <div className="inner">{ children }</div>;
     }
   });
 
