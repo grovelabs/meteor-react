@@ -10,8 +10,6 @@ Meteor.methods({
 // client-side definition of <Leaderboard /> and initialization
 if (Meteor.isClient) {
 
-  var cx = React.addons.classSet;
-
   var Leaderboard = React.createClass({
     mixins: [ DDPMixin, ReactiveMixin ],
 
@@ -81,21 +79,22 @@ if (Meteor.isClient) {
     }
   });
 
-  var Player = React.createClass({
-    mixins: [ ReactiveMixin ],
+  // Alternative to `React.createClass({...})` but no ES6 mixins support
+  // see: https://facebook.github.io/react/docs/reusable-components.html#no-mixins
+  class Player extends React.Component {
+    constructor(props) {
+      super(props);
+    }
 
-    getInitialState: function () {
-      return null;
-    },
-
-    render: function() {
+    render() {
       var { name, score, ...rest } = this.props;
-      return <div {...rest} className={cx("player", rest.className)}>
+      var classString = `player ${rest.className}`;
+      return <div {...rest} className={classString}>
         <span className="name">{name}</span>
         <span className="score">{score}</span>
       </div>;
     }
-  });
+  }
 
   // Attach to a document id.
   Meteor.startup(function (argument) {
