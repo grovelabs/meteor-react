@@ -3,6 +3,8 @@ This a [Meteor](https://meteor.com) package that loads in the [React](https://fa
 
 *If you're looking for a JSX compiler see [`grigio:babel`](https://github.com/grigio/meteor-babel)*
 
+*If you're looking for a lighweight router see [`meteorhacks:flow-router`](https://github.com/meteorhacks/flow-router) ([example](https://github.com/flow-examples/flow-router-react-example))*
+
 **Current React version: 0.13.1**
 
 ## Usage
