@@ -2,7 +2,7 @@ Package.describe({
   name: "grove:react",
   version: "0.1.1",
   summary: "React for Meteor - vendor files and essential mixins",
-  git: "https://github.com/grove/meteor-react/"
+  git: "https://github.com/grovelabs/meteor-react/"
 });
 
 var reactPath = 'vendor/react-with-addons-';
