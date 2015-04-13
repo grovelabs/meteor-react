@@ -113,4 +113,4 @@ When called from within `getReactiveState`, it sets up a dependency on that meth
 
 ## Future Work
 ### Server-side
-Currently the package only loads the files onto the client. Having it on the server for the possibility of server-side rendering would be cool.
+The package loads React onto server and client, but the mixins are not supported on the server since Tracker and `Meteor.subscribe` are not supported on the server. Thoughts and pull requests welcome.
