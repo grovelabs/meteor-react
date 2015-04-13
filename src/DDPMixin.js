@@ -47,16 +47,11 @@ DDPMixin = {
         // assuming it's either undefined or DDP.subscribe handles
         if (typeof subs !== 'undefined') {
           subs = [].concat(subs); // make it an array
-          var isReady = _.reduce(
-            subs,
-            function(result, sub) {
-              return result && sub.ready();  // The .ready() call is the
-                                             // reactive data source
-            },
-            true
-          );
+          var isReady = _.every(subs, function(sub) {
+              return sub.ready();  // The .ready() call is the
+          });                      // reactive data source
           reactiveState.subsReady = isReady; // React
-          subsReady.set(isReady);       // Meteor
+          subsReady.set(isReady);            // Tracker
         } else {
           // True if there are no subs, subscriptions() returned nothing
           reactiveState.subsReady = true;
