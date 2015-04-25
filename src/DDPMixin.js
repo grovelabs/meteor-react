@@ -55,6 +55,7 @@ DDPMixin = {
         } else {
           // True if there are no subs, subscriptions() returned nothing
           reactiveState.subsReady = true;
+          subsReady.set(true);
         }
 
         // Handling changing state

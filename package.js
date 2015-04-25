@@ -1,6 +1,6 @@
 Package.describe({
   name: "grove:react",
-  version: "0.1.2",
+  version: "0.1.3",
   summary: "React for Meteor - vendor files and essential mixins",
   git: "https://github.com/grovelabs/meteor-react/"
 });
