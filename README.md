@@ -48,6 +48,8 @@ Bookface = React.createClass({
 ### DDPMixin
 This mixin provides a way of binding DDP subscriptions to a React component. Components that use this mixin should implement a method named `subscriptions` and return either a single [subscription handle](http://docs.meteor.com/#/full/meteor_subscribe) or an array of subscription handles. You can then call `subsReady()` within `getReactiveState` to reactively wait on them, or check `this.state.subsReady` from within the render function to see if they're ready. (You can also call `this.subsReady()` from within `render` but it follows React convention more closely to use the component's state).
 
+Make sure to include the DDPMixin _before_ ReactiveMixin for the component. As stated in the [Reusable Component docs](https://facebook.github.io/react/docs/reusable-components.html#mixins), _"methods defined on mixins run in the order mixins were listed, followed by... the component."_ DDPMixin must run first and define the `subsReady` function before it can be called within `getReactiveState`.
+
 An interesting use case might be to have a component that makes its own DDP connection and uses that instead of the default Meteor connection. `Meteor.subscribe` is just a [bound wrapper around a DDP connection](https://github.com/meteor/meteor/blob/devel/packages/ddp/client_convenience.js#L45-L56)
 
 A `SubsManager` object from [`meteorhacks:subs-manager`](https://github.com/meteorhacks/subs-manager) could also be used instead of `Meteor.subscribe`.
