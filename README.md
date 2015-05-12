@@ -3,7 +3,7 @@ This a [Meteor](https://meteor.com) package that loads in the [React](https://fa
 
 *If you're looking for a JSX compiler see [`grigio:babel`](https://github.com/grigio/meteor-babel)*
 
-**Current React version: 0.13.1**
+**Current React version: 0.13.3**
 
 ## Usage
 ### Installation
