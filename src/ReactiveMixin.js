@@ -16,13 +16,17 @@ ReactiveMixin = {
     var self = this;
     if ( self.getReactiveState ) {
       var initState = {};
+      // Log a console warning if mixins are in the wrong order
+      if (this.subscriptions && typeof this.subsReady === 'undefined' ) {
+        console.warn('Need to bring in DDPMixin before ReactiveMixin to define the subscription state');
+      }
       self._reactiveStateComputation = Tracker.autorun( function(computation) {
         // Something in getReactiveState MUST be a reactive data source
         // in order for rerun
         var reactiveState = self.getReactiveState();
         if ( typeof reactiveState !== 'undefined' ) {
           if (computation.firstRun) {
-              initState = reactiveState;
+            initState = reactiveState;
           } else if ( self.isMounted() ) {
             // can't call setState until component is mounted
             self.setState(reactiveState);

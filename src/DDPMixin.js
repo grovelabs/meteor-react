@@ -15,9 +15,6 @@
  * components `render`, but it follows React convention more closely to use the
  * state variable instead.
  *
- * If the subscriptions are ready immediately the `subsReady` state will be
- * updated synchronously, reflecting that state at `componentWillMount`
- *
  * `this.state.subsReady` {Boolean} represents state of the declared subs
  * `this.subsReady` {Function} reactive method also representing state of subs
  *
@@ -28,55 +25,46 @@ DDPMixin = {
   getInitialState: function() {
     var self = this;
     if ( self.subscriptions ) {
-      var initState = {   // This is for React
-        subsReady: false
-      };
-      var subsReady = new ReactiveVar(false); // This is for Tracker
+      // Setting up Tracker state
+      var subsReady = new ReactiveVar(false);
+      self._subsReadyVar = subsReady;
       // The reactive method to call in getReactiveState
       self.subsReady = subsReady.get.bind(subsReady);
-      self._subsComputation = Tracker.autorun( function(computation) {
-        var reactiveState = {};
-        // If you call Meteor.subscribe within Tracker.autorun, the
-        // subscription will be automatically cancelled when the computation
-        // is invalidated or stopped; it's not necessary to call stop on
-        // subscriptions made from inside autorun. However, if the next
-        // iteration of your run function subscribes to the same record set
-        // (same name and parameters), Meteor is smart enough to skip a
-        // wasteful unsubscribe/resubscribe
-        var subs = self.subscriptions();
-        // assuming it's either undefined or DDP.subscribe handles
-        if (typeof subs !== 'undefined') {
-          subs = [].concat(subs); // make it an array
-          var isReady = _.every(subs, function(sub) {
-              return sub.ready();  // The .ready() call is the
-          });                      // reactive data source
-          reactiveState.subsReady = isReady; // React
-          subsReady.set(isReady);            // Tracker
-        } else {
-          // True if there are no subs, subscriptions() returned nothing
-          reactiveState.subsReady = true;
-          subsReady.set(true);
-        }
 
-        // Handling changing state
-        if (computation.firstRun) {
-          initState = reactiveState;  // set sync
-        } else if ( self.isMounted() ) {
-          // can't call setState until component is mounted
-          self.setState(reactiveState); // set async
-        } else { // it's not mounted and we need to wait to `setState`
-          Tracker.afterFlush(function () {
-            // Basically trying to call `afterMounted`
-            // This has only after been called after the component has
-            // mounted, but I don't think it's guaranteed that this will
-            // actually be after it's mounted
-            self.setState(reactiveState); // set async
-          });
-        }
-
-      });
-      return initState;
+      // Setting up React state
+      return {
+        subsReady: false
+      };
     }
+  },
+
+  componentWillMount: function() {
+    var self = this;
+    self._subsComputation = Tracker.autorun( function(computation) {
+      var subsReady;
+      // If you call Meteor.subscribe within Tracker.autorun, the
+      // subscription will be automatically cancelled when the computation
+      // is invalidated or stopped; it's not necessary to call stop on
+      // subscriptions made from inside autorun. However, if the next
+      // iteration of your run function subscribes to the same record set
+      // (same name and parameters), Meteor is smart enough to skip a
+      // wasteful unsubscribe/resubscribe
+      var subs = self.subscriptions();
+      // assuming it's either undefined or DDP.subscribe handles
+      if (typeof subs !== 'undefined') {
+        subs = [].concat(subs); // make it an array
+        subsReady = _.every(subs, function(sub) { return sub.ready(); });
+        // The .ready() call is the reactive data source
+      } else {
+        // True if there are no subs, subscriptions() returned nothing
+        subsReady = true;
+      }
+
+      self._subsReadyVar.set(subsReady);    // Tracker
+      self.setState({                       // React
+        subsReady: subsReady
+      });
+    });
   },
 
   componentWillUnmount: function() {
