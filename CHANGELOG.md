@@ -1,3 +1,6 @@
+### v0.3.0
+* No longer includes React vendor files
+
 ### v0.2.0
 * Subscription setup moved to componentWillMount. Now have access to this.state
 within the `subscriptions` method.
