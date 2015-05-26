@@ -1,9 +1,15 @@
 # Meteor & React
-This a [Meteor](https://meteor.com) package that loads in the [React](https://facebook.github.io/react) library (with addons) and 2 mixins that enable binding reactive data sources and DDP subscriptions to a Component.
+This a [Meteor](https://meteor.com) package that includes 2 React mixins that enable binding reactive data sources and DDP subscriptions to a React Component.
 
 *If you're looking for a JSX compiler see [`grigio:babel`](https://github.com/grigio/meteor-babel)*
 
-**Current React version: 0.13.3**
+## Table of Contents
+1. [Usage](#usage)
+	2. [ReactiveMixin](#reactivemixin)
+	3. [DDPMixin](#ddpmixin)
+2. [Including React](#including-react)
+2. [How it works](#how-it-works)
+3. [Future Fork](#future-work)
 
 ## Usage
 ### Installation
@@ -99,10 +105,38 @@ Post = React.createClass({
 ```
 For more modularity you could use the params from your Router instead of `Session.get`
 
-## How it works
-### Loading React
-The difference between the development and production versions of React is more than just minification. There are warnings that are removed and optimizations made. When building React from its source the library handles this, but since Meteor doesn't support loading NPM packages on the client, this package provides the pre-built production version. It does so by checking if the `process` was started with `meteor build`
+## Loading React
+It's recommended to use [`cosmos:browserify`]() to get the React library itself. To do so correctly, you'll want to create a local package, `require` what you want, and then explicitly export them. You want to use a local package so that it gets loaded in before your application. For example, if you want to use React with addons and React Router:
 
+```js
+// packages/client-deps/package.js
+Package.describe({
+  name: 'client-deps',
+});
+
+Npm.depends({
+  "react" : "0.13.3",
+  "react-router" : "0.13.3"
+});
+
+Package.onUse(function(api) {
+  api.use(['cosmos:browserify@0.2.0']);
+  api.addFiles(['browserify.js']);
+  api.export(['React', 'ReactRouter']);
+});
+```
+
+```js
+// packages/client-deps/browserify.js
+React = require('react/addons');
+ReactRouter = require('react-router');
+```
+
+`React` and `ReactRouter` will then be exposed at the global scope to both the client and server.
+
+**A note on using the production version of React**: The difference between the development and production versions of React is more than just minification. There are warnings that are removed and optimizations made. To remove these warnings, make sure that your `NODE_ENV` environment variable is set to `"production"` when building your app. The [envify](https://www.npmjs.com/package/envify) transform present in cosmos:browserify will replace `process.env.NODE_ENV` with `"production"` throughout the library, and then when Meteor runs [UglifyJS](https://github.com/mishoo/UglifyJS2) it'll eliminate the now-dead code.
+
+## How it works
 ### Reactive Subscriptions
 All of the subscription handles that are returned from `subscriptions` have `.ready()` called on them, which is a reactive data source. Every time a new subscription becomes ready it will check them all again. Once they are all ready, a `ReactiveVar` is set to true. The component method `this.subsReady()` is actually a bound `get` call on a ReactiveVar. 
 
