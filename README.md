@@ -106,7 +106,7 @@ Post = React.createClass({
 For more modularity you could use the params from your Router instead of `Session.get`
 
 ## Loading React
-It's recommended to use [`cosmos:browserify`]() to get the React library itself. To do so correctly, you'll want to create a local package, `require` what you want, and then explicitly export them. You want to use a local package so that it gets loaded in before your application. For example, if you want to use React with addons and React Router:
+It's recommended to use [`cosmos:browserify`](https://github.com/elidoran/cosmos-browserify/) to get the React library itself. To do so correctly, you'll want to create a local package, `require` what you want, and then explicitly export them. You want to use a local package so that it gets loaded in before your application. For example, if you want to use React with addons and React Router:
 
 ```js
 // packages/client-deps/package.js
