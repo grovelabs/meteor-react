@@ -1,3 +1,6 @@
+#DEPRECATED
+This package has been deprecated in favor of the official Meteor React package, [`react-meteor-data`](https://react-in-meteor.readthedocs.org/en/latest/meteor-data/).
+
 # Meteor & React
 This a [Meteor](https://meteor.com) package that includes 2 React mixins that enable binding reactive data sources and DDP subscriptions to a React Component.
 
